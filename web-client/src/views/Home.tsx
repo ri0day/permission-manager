@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useUsers } from '../hooks/useUsers'
 import { Link } from 'react-router-dom'
 import DataTable, { TableColumn } from 'react-data-table-component';
+import CreateKubeconfigButton from '../components/CreateKubeconfigButton';
 
 type Row = {
   name: string;
@@ -32,9 +33,17 @@ export default function Home() {
       selector: row => row.name,
       sortable: true,
       cell: (row) => {
-        return <Link to={`/users/${row.name}`} className="underline underline text-blue-600 hover:text-blue-800">
+        return <Link to={`/users/${row.name}`} className="text-blue-600 hover:text-blue-300 text-lg font-bold">
           {row.name}
         </Link>
+      }
+    },
+    {
+      name: "KubeConfig",
+      selector: row => row.name,
+      sortable: true,
+      cell: ({ name }) => {
+        return <CreateKubeconfigButton user={{ name }} customText="SHOW" />
       }
     },
     {
@@ -71,7 +80,7 @@ export default function Home() {
 
   return (
     <div className=" bg-gray-200  pt-16">
-      <div className="max-w-3xl mx-auto">
+      <div className="pr-3 pl-3">
         <div className=" bg-white shadow-md rounded px-8 pt-4 pb-8 mb-4">
           <div className="mb-2 text-right">
             <Link to="/new-user">
