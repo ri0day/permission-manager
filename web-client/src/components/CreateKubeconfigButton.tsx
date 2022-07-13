@@ -56,7 +56,35 @@ export default function CreateKubeconfigButton({ user, customText = "" }: Create
   }, [kubeconfig, showModal, user.name, chosenNamespace, validNamespaces])
 
   return (
-    <span className="flex">
+    <>
+      <span className="flex gap-x-2">
+        <select
+          defaultValue={chosenNamespace}
+          title={chosenNamespace}
+          onChange={e => setChosenNamespace(e.target.value)}
+          style={{
+            border: "1px solid gray",
+            borderRadius: "4px",
+            maxWidth: "100px",
+            width: "100px"
+          }}
+        >
+          {validNamespaces.map((ns) => {
+            return (
+              <option key={ns} value={ns}>
+                {ns}
+              </option>
+            )
+          })}
+        </select>
+        <button
+          className="bg-transparent hover:bg-teal-500 text-teal-700 font-semibold hover:text-white py-2 px-4 border border-teal-500 hover:border-transparent rounded whitespace-no-wrap"
+          onClick={() => setShowModal(true)}
+          type="button"
+        >
+          {customText ? customText : `show kubeconfig for ${user.name}`}
+        </button>
+      </span>
       <Dialog
         className="max-w-4xl	mx-auto bg-white shadow-md rounded px-8 pt-4 pb-8 mb-4"
         isOpen={showModal}
@@ -107,30 +135,6 @@ export default function CreateKubeconfigButton({ user, customText = "" }: Create
           </div>
         </div>
       </Dialog>
-      <button
-        className="bg-transparent hover:bg-teal-500 text-teal-700 font-semibold hover:text-white py-2 px-4 border border-teal-500 hover:border-transparent rounded whitespace-no-wrap"
-        onClick={() => setShowModal(true)}
-        type="button"
-      >
-        {customText ? customText : `show kubeconfig for ${user.name}`}
-      </button>
-      <select
-        defaultValue={chosenNamespace}
-        onChange={e => setChosenNamespace(e.target.value)}
-        style={{
-          marginLeft: "5%",
-          border: "1px solid gray",
-          borderRadius: "4px"
-        }}
-      >
-        {validNamespaces.map((ns) => {
-          return (
-            <option key={ns} value={ns}>
-              {ns}
-            </option>
-          )
-        })}
-      </select>
-    </span>
+    </>
   )
 }
