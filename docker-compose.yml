@@ -1,0 +1,30 @@
+# development use
+version: "3.4"
+services:
+  frontend:
+    build:
+      dockerfile: Dockerfile
+      context: ./web-client
+    volumes:
+      - ./:/app
+    environment:
+      REACT_APP_BACKEND_URL: "http://localhost:4002" # example docker-desktop (will not effect development)
+      REACT_APP_BASIC_AUTH_PASSWORD: "12345678" # example docker-desktop (will not effect development)
+    ports:
+      - "4001:3000"
+
+  # backend:
+  #   environment:
+  #     IS_LOCAL_DEVELOPMENT: "true"
+  #     CLUSTER_NAME: docker-desktop # example docker-desktop (will not effect development)
+  #     CONTROL_PLANE_ADDRESS: https://kubernetes.docker.internal:6443 # example "https://kubernetes.docker.internal:6443" for docker-desktop
+  #     BASIC_AUTH_PASSWORD: 12345678 # example docker-desktop (will not effect development)
+  #     PORT: 4005
+  #   ports:
+  #     - "4002:4005"
+  #   build:
+  #     dockerfile: development/backend.dockerfile
+  #     context: .
+  #   volumes:
+  #     - ./:/app
+  #     - ./.kubeconfig-backend:/root/.kube
