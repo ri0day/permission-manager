@@ -1,22 +1,21 @@
-import React, {useEffect, useState} from 'react'
-import {Dialog} from '@reach/dialog'
-import Editor from 'react-simple-code-editor'
-import {ClusterRoleBinding, RoleBinding, useRbac} from "../hooks/useRbac";
-import {extractUsersRoles} from "../services/role";
-import {User} from "../types";
-import {httpRequests} from "../services/httpRequests";
+import React, { useEffect, useState } from 'react'
+import { Dialog } from '@reach/dialog'
+import { ClusterRoleBinding, RoleBinding, useRbac } from "../hooks/useRbac";
+import { extractUsersRoles } from "../services/role";
+import { User } from "../types";
+import { httpRequests } from "../services/httpRequests";
 
 /**
  * getValidNamespaces extracts the valid kubeconfig namespace values
  */
 function getValidNamespaces(roleBindings: RoleBinding[], clusterRoleBindings: ClusterRoleBinding[], user: User): string[] {
-  const {extractedPairItems} = extractUsersRoles(roleBindings, clusterRoleBindings, user.name);
-  
+  const { extractedPairItems } = extractUsersRoles(roleBindings, clusterRoleBindings, user.name);
+
   const uniqueNamespaces = extractedPairItems.length === 0 ? [] : [...new Set(extractedPairItems.map(i => i.namespaces).flat(1))];
-  
+
   // we remove the invalid namespaces from the array
   const validNamespaces = uniqueNamespaces.filter(i => i !== "ALL_NAMESPACES");
-  
+
   //a) If no elements are present we add the default namespace to the extracted namespaces.
   if (validNamespaces.length === 0) {
     validNamespaces.push("default");
@@ -28,33 +27,33 @@ interface CreateKubeconfigButtonParameters {
   user: User;
 }
 
-export default function CreateKubeconfigButton({user}: CreateKubeconfigButtonParameters) {
+export default function CreateKubeconfigButton({ user }: CreateKubeconfigButtonParameters) {
 
   const [showModal, setShowModal] = useState<boolean>(false)
   const [kubeconfig, setKubeconfig] = useState<string>('')
   const [copied, setCopied] = useState<boolean>(false);
-  const {clusterRoleBindings, roleBindings} = useRbac()
+  const { clusterRoleBindings, roleBindings } = useRbac()
   const validNamespaces = getValidNamespaces(roleBindings, clusterRoleBindings, user);
-  
+
   //b) we generate an array of unique namespaces.
   const [chosenNamespace, setChosenNamespace] = useState<string>(validNamespaces[0]);
-  
+
   useEffect(() => {
     // !kubeconfig.includes(chosenNamespace) is needed to remake the API request if the chosenNamespace changed
     if (showModal && (kubeconfig === '' || !kubeconfig.includes("namespace: " + chosenNamespace))) {
       httpRequests.kubeconfigCreate(user.name, chosenNamespace)
-        .then(({data}) => {
+        .then(({ data }) => {
           setKubeconfig(data.kubeconfig)
         })
     }
-    
+
     // needed for properly refresh the state if the user has selected a namespace that doesn't exist anymore
     if (!validNamespaces.find(n => n === chosenNamespace)) {
       setChosenNamespace(validNamespaces[0])
     }
-    
+
   }, [kubeconfig, showModal, user.name, chosenNamespace, validNamespaces])
-  
+
   return (
     <span className="flex">
       <Dialog
@@ -95,21 +94,11 @@ export default function CreateKubeconfigButton({user}: CreateKubeconfigButtonPar
                 {copied ? 'Copied' : 'Copy'}
               </button>
             </div>
-  
+
             {kubeconfig ? (
-              <div data-testid="yaml">
-                <Editor
-                  autoFocus
-                  onValueChange={code => code}
-                  value={kubeconfig}
-                  highlight={code => code}
-                  padding={10}
-                  style={{
-                    fontFamily: '"Fira code", "Fira Mono", monospace',
-                    fontSize: 12
-                  }}
-                />
-              </div>
+              <pre className='whitespace-pre-wrap break-all' >
+                {kubeconfig}
+              </pre>
             ) : (
               '...loading'
             )}
@@ -130,13 +119,13 @@ export default function CreateKubeconfigButton({user}: CreateKubeconfigButtonPar
           marginLeft: "5%"
         }}
       >
-            {validNamespaces.map((ns) => {
-              return (
-                <option key={ns} value={ns}>
-                  {ns}
-                </option>
-              )
-            })}
+        {validNamespaces.map((ns) => {
+          return (
+            <option key={ns} value={ns}>
+              {ns}
+            </option>
+          )
+        })}
       </select>
     </span>
   )
