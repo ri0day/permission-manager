@@ -25,9 +25,10 @@ function getValidNamespaces(roleBindings: RoleBinding[], clusterRoleBindings: Cl
 
 interface CreateKubeconfigButtonParameters {
   user: User;
+  customText?: string
 }
 
-export default function CreateKubeconfigButton({ user }: CreateKubeconfigButtonParameters) {
+export default function CreateKubeconfigButton({ user, customText = "" }: CreateKubeconfigButtonParameters) {
 
   const [showModal, setShowModal] = useState<boolean>(false)
   const [kubeconfig, setKubeconfig] = useState<string>('')
@@ -63,18 +64,19 @@ export default function CreateKubeconfigButton({ user }: CreateKubeconfigButtonP
       >
         <div>
           <div>
-            <div className="flex justify-between">
-              <h2 className="text-3xl mb-4 text-gray-800">
+            <div className="flex justify-between items-center">
+              <h2 className="text-3xl mb-4 text-gray-800 ">
                 kubeconfig for {user.name}
               </h2>
               <button
-                className="text-lg close-button"
+                className="text-lg close-button  rounded-full w-8 h-8"
+                style={{ height: 'fit-content' }}
                 onClick={() => setShowModal(false)}
               >
-                <span aria-hidden>×</span>
+                <span aria-hidden className='text-2xl'>×</span>
               </button>
             </div>
-
+            <hr className='mb-4' />
             <div className="flex flex-row-reverse w-full mb-2">
               <button
                 className="bg-transparent hover:bg-teal-500 text-teal-700 font-semibold hover:text-white py-2 px-4 border border-teal-500 hover:border-transparent rounded"
@@ -110,13 +112,15 @@ export default function CreateKubeconfigButton({ user }: CreateKubeconfigButtonP
         onClick={() => setShowModal(true)}
         type="button"
       >
-        show kubeconfig for {user.name}
+        {customText ? customText : `show kubeconfig for ${user.name}`}
       </button>
       <select
         defaultValue={chosenNamespace}
         onChange={e => setChosenNamespace(e.target.value)}
         style={{
-          marginLeft: "5%"
+          marginLeft: "5%",
+          border: "1px solid gray",
+          borderRadius: "4px"
         }}
       >
         {validNamespaces.map((ns) => {
