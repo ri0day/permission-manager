@@ -116,11 +116,13 @@ export default function CreateKubeconfigButton({ user, customText = "" }: Create
       </button>
       <select
         defaultValue={chosenNamespace}
+        title={chosenNamespace}
         onChange={e => setChosenNamespace(e.target.value)}
         style={{
           marginLeft: "5%",
           border: "1px solid gray",
-          borderRadius: "4px"
+          borderRadius: "4px",
+          maxWidth: "100px"
         }}
       >
         {validNamespaces.map((ns) => {
