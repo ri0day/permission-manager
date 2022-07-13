@@ -96,9 +96,9 @@ export default function CreateKubeconfigButton({ user }: CreateKubeconfigButtonP
             </div>
 
             {kubeconfig ? (
-              <code>
+              <pre className='whitespace-pre-wrap break-all' >
                 {kubeconfig}
-              </code>
+              </pre>
             ) : (
               '...loading'
             )}
