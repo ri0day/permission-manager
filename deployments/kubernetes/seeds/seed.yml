@@ -37,6 +37,10 @@ rules:
       - "ingresses"
       - "networkpolicies"
       - "poddisruptionbudgets"
+      - "statefulsets"
+      - "horizontalpodautoscalers"
+      - "cronjobs"
+      - "jobs"
     verbs:
       - "*"
 ---
